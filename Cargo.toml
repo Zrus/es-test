@@ -10,3 +10,6 @@ edition = "2018"
 eventsourcing = "*"
 chrono = "*"
 uuid = { version = "*", features = [ "serde", "v4" ] }
+serde = { version = "*", features = ["derive"] }
+serde_json  = "*"
+serde_derive = "*"

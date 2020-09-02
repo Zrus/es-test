@@ -1,26 +1,28 @@
+use chrono::prelude::*;
+
+use super::super::staff_models::staff_data::Staff;
+use super::super::customer_models::customer_data::Customer;
+use super::super::service_models::service_data::Service;
+
+#[derive(Debug)]
 pub enum BookingCommands {
   AddBooking {
-    customer_id: String,
-    staff_ids: Vec<String>,
-    service_ids: Vec<String>,
-    date: DateTime<Utc>
-  },
-  UpdateBooking {
-    id: String,
-    staff_ids: Vec<String>,
-    service_ids: Vec<String>,
-    date: DateTime<Utc>
-  },
-  VerifyBooking {
-    id: String,
-    customer_id: String
-  },
-  CancelBooking {
-    id: String
-  },
-  BlockBooking {
+    customer: Customer,
     staff: Staff,
-    start_time: DateTime<Utc>,
-    end_time: DateTime<Utc>
+    service: Service,
+    created_date: DateTime<Utc>,
+    booking_date: DateTime<Utc>
+  },
+}
+
+impl BookingCommands {
+  pub fn add_booking(customer: Customer, staff: Staff, service: Service, created_date: DateTime<Utc>, booking_date: DateTime<Utc>) -> BookingCommands {
+    BookingCommands::AddBooking {
+      customer,
+      staff,
+      service,
+      created_date,
+      booking_date
+    }
   }
 }

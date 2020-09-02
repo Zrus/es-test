@@ -1,29 +1,26 @@
-use booking_data::*;
+use serde::Serialize;
+use uuid::Uuid;
 
+use super::super::event_store_models::cloud_event::Event;
+use super::booking_data::*;
+
+#[derive(Serialize)]
 pub enum BookingEvents {
-  BookingAdded(BookingData),
-  BookingAddFailed(String),
-  BookingUpdated(BookingData),
-  BookingUpdateFailed(String),
-  BookingVerified(BookingData),
-  BookingVerifyFailed(String),
-  BookingCanceled(BookingData),
-  BookingCancelFailed(String),
-  BookingBlocked(BlockData),
-  BookingBlockFailed(String)
+  BookingAdded(Uuid, BookingData),
+  BookingAddFailed(Uuid, BookingData),
 }
 
-impl Event for BookingEvent {
+impl Event for BookingEvents {
   fn event_type_version(&self) -> &str {
     "0.1"
   }
   fn event_type(&self) -> &str {
     "BOOKING_EVENT"
   }
-  fn event_stream_id(&self) -> i64 {
+  fn event_stream_sequence(&self) -> i64 {
     1
   }
-  fn event_stream_sequence(&self) -> &str {
+  fn event_stream_id(&self) -> &str {
     "BOOKING_01"
   }
 }

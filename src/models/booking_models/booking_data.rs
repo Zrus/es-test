@@ -1,13 +1,13 @@
+use chrono::prelude::*;
+use uuid::Uuid;
+use serde::Serialize;
+
 use crate::models::customer_models::customer_data::Customer;
 use crate::models::service_models::service_data::Service;
 use crate::models::staff_models::staff_data::Staff;
 
-use chrono::prelude::*;
-use uuid::Uuid;
 
-use std::fmt::Debug;
-
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct BookingData {
   pub id: Uuid,
   pub customer: Customer,
@@ -36,7 +36,20 @@ impl BookingData {
   }
 }
 
-#[derive(Debug)]
+impl Clone for BookingData {
+  fn clone(&self) -> BookingData {
+    BookingData {
+    id: self.id,
+    customer: self.customer.clone(),
+    staff: self.staff.clone(),
+    service: self.service.clone(),
+    created_date: self.created_date,
+    booking_date: self.booking_date
+    }
+  }
+}
+
+#[derive(Debug, Serialize)]
 pub struct BlockData {
   pub staff: Staff,
   pub start_time: DateTime<Utc>,
@@ -53,6 +66,16 @@ impl BlockData {
       staff,
       start_time,
       end_time,
+    }
+  }
+}
+
+impl Clone for BlockData {
+  fn clone(&self) -> BlockData {
+    BlockData {
+      staff: self.staff.clone(),
+      start_time: self.start_time,
+      end_time: self.end_time
     }
   }
 }
