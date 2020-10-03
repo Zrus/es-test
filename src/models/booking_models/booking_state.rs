@@ -2,12 +2,13 @@ use std::collections::HashMap;
 use uuid::Uuid;
 
 use super::super::event_store_models::aggregate::AggregateState;
-use super::booking_data::{BookingData, BlockData};
+use super::booking_data::BookingData;
+use super::blocking_data::BlockData;
 
 pub struct BookingState {
   pub entity_id: String,
-  pub booking_list: HashMap<Uuid, BookingData>, // Key could be staff_id ??
-  pub block_list: HashMap<Uuid, BlockData>,
+  pub booking_list: HashMap<String, BookingData>, // Key could be staff_id ??
+  pub block_list: HashMap<String, BlockData>,
   pub generation: u64
 }
 

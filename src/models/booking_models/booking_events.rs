@@ -4,10 +4,10 @@ use uuid::Uuid;
 use super::super::event_store_models::cloud_event::Event;
 use super::booking_data::*;
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub enum BookingEvents {
-  BookingAdded(Uuid, BookingData),
-  BookingAddFailed(Uuid, BookingData),
+  BookingAdded(String, BookingData),
+  BookingAddFailed(String, BookingData),
 }
 
 impl Event for BookingEvents {

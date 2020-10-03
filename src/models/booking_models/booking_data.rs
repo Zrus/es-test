@@ -9,7 +9,7 @@ use crate::models::staff_models::staff_data::Staff;
 
 #[derive(Debug, Serialize)]
 pub struct BookingData {
-  pub id: Uuid,
+  pub id: String,
   pub customer: Customer,
   pub staff: Staff,
   pub service: Service,
@@ -26,7 +26,7 @@ impl BookingData {
     booking_date: DateTime<Utc>,
   ) -> BookingData {
     BookingData {
-      id: Uuid::new_v4(),
+      id: Uuid::new_v4().to_string(),
       customer,
       staff,
       service,
@@ -39,7 +39,7 @@ impl BookingData {
 impl Clone for BookingData {
   fn clone(&self) -> BookingData {
     BookingData {
-    id: self.id,
+    id: self.id.clone(),
     customer: self.customer.clone(),
     staff: self.staff.clone(),
     service: self.service.clone(),
@@ -49,33 +49,3 @@ impl Clone for BookingData {
   }
 }
 
-#[derive(Debug, Serialize)]
-pub struct BlockData {
-  pub staff: Staff,
-  pub start_time: DateTime<Utc>,
-  pub end_time: DateTime<Utc>,
-}
-
-impl BlockData {
-  pub fn new(
-    staff: Staff, 
-    start_time: DateTime<Utc>, 
-    end_time: DateTime<Utc>
-  ) -> BlockData {
-    BlockData {
-      staff,
-      start_time,
-      end_time,
-    }
-  }
-}
-
-impl Clone for BlockData {
-  fn clone(&self) -> BlockData {
-    BlockData {
-      staff: self.staff.clone(),
-      start_time: self.start_time,
-      end_time: self.end_time
-    }
-  }
-}
