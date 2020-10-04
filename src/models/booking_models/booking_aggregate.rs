@@ -46,6 +46,7 @@ impl Aggregate for BookingAggregate {
         booking_date,
       } => {
         let id = Uuid::new_v4();
+        
         match validate_booking() {
           true => {
             // add logic here
@@ -153,6 +154,59 @@ impl BookingAggregate {
       ),
     ]
   }
+  pub fn load_bookings() -> Vec<BookingData> {
+    vec![BookingData {
+      id: "ebc9f2cd-af10-42f4-bfcd-9c12be2941fc".to_owned(),
+      customer: Customer {
+        id: "customer123".to_owned(),
+        name: "Tuong".to_owned(),
+        phone_number: "0909909009".to_owned(),
+        address: "HoChiMinh".to_owned(),
+        email: "zentech.demo@gmail.com".to_owned(),
+      },
+      staff: Staff {
+        id: "staff123".to_owned(),
+        name: "Tri".to_owned(),
+        services: vec![Service {
+          id: "service123".to_owned(),
+          name: "HairCut".to_owned(),
+          duration: 15,
+        }],
+      },
+      service: Service {
+        id: "service123".to_owned(),
+        name: "HairCut".to_owned(),
+        duration: 15,
+      },
+      created_date: Utc::now().round_subsecs(0),
+      booking_date: Utc.ymd(2020, 12, 31).and_hms(9, 15, 00),
+    }, BookingData {
+      id: "d2054836-8e5e-44ff-a9fa-35c64cd6cf2e".to_owned(),
+      customer: Customer {
+        id: "customer234".to_owned(),
+        name: "Rin".to_owned(),
+        phone_number: "0909909009".to_owned(),
+        address: "HoChiMinh".to_owned(),
+        email: "zentech.demo@gmail.com".to_owned(),
+      },
+      staff: Staff {
+        id: "staff234".to_owned(),
+        name: "Tuan".to_owned(),
+        services: vec![Service {
+          id: "service123".to_owned(),
+          name: "HairCut".to_owned(),
+          duration: 15,
+        }],
+      },
+      service: Service {
+        id: "service123".to_owned(),
+        name: "HairCut".to_owned(),
+        duration: 15,
+      },
+      created_date: Utc::now().round_subsecs(0),
+      booking_date: Utc.ymd(2020, 01, 15).and_hms(9, 15, 00),
+    }]
+  }
   pub fn load_blocks() -> Vec<BlockData> {
     vec![BlockData {
       staff: Staff {
@@ -174,6 +228,6 @@ impl BookingAggregate {
 mod tests {
   #[test]
   fn test_handle_commands() {
-    println!("Oke dumamay");
+
   }
 }
