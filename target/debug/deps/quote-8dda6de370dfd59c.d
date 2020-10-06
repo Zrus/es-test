@@ -1,0 +1,13 @@
+d:\Workspace\Rust\es-test\target\debug\deps\quote-8dda6de370dfd59c.rmeta: C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\lib.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\ext.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\format.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\ident_fragment.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\to_tokens.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\runtime.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\spanned.rs
+
+d:\Workspace\Rust\es-test\target\debug\deps\libquote-8dda6de370dfd59c.rlib: C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\lib.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\ext.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\format.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\ident_fragment.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\to_tokens.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\runtime.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\spanned.rs
+
+d:\Workspace\Rust\es-test\target\debug\deps\quote-8dda6de370dfd59c.d: C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\lib.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\ext.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\format.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\ident_fragment.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\to_tokens.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\runtime.rs C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\spanned.rs
+
+C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\lib.rs:
+C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\ext.rs:
+C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\format.rs:
+C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\ident_fragment.rs:
+C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\to_tokens.rs:
+C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\runtime.rs:
+C:\Users\Zrus\.cargo\registry\src\github.com-1ecc6299db9ec823\quote-1.0.7\src\spanned.rs:

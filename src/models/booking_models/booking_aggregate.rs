@@ -40,7 +40,6 @@ impl Aggregate for BookingAggregate {
     let events = match cmd {
       BookingCommands::AddBooking {
         customer,
-        staff,
         service,
         created_date,
         booking_date,
@@ -58,7 +57,6 @@ impl Aggregate for BookingAggregate {
               BookingData {
                 id: id.to_string(),
                 customer: customer.clone(),
-                staff: staff.clone(),
                 service: service.clone(),
                 created_date: created_date.clone(),
                 booking_date: booking_date.clone(),
@@ -70,7 +68,6 @@ impl Aggregate for BookingAggregate {
             BookingData {
               id: id.to_string(),
               customer: customer.clone(),
-              staff: staff.clone(),
               service: service.clone(),
               created_date: created_date.clone(),
               booking_date: booking_date.clone(),
@@ -105,20 +102,22 @@ impl BookingAggregate {
             address: "HoChiMinh".to_owned(),
             email: "zentech.demo@gmail.com".to_owned(),
           },
-          staff: Staff {
-            id: "staff123".to_owned(),
-            name: "Tri".to_owned(),
-            services: vec![Service {
-              id: "service123".to_owned(),
-              name: "HairCut".to_owned(),
-              duration: 15,
-            }],
-          },
-          service: Service {
+          service: (
+            Staff {
+              id: "staff123".to_owned(),
+              name: "Tri".to_owned(),
+              services: vec![Service {
+                id: "service123".to_owned(),
+                name: "HairCut".to_owned(),
+                duration: 15,
+              }],
+            },
+            Service {
             id: "service123".to_owned(),
             name: "HairCut".to_owned(),
-            duration: 15,
-          },
+            duration: 15},
+            (Utc.ymd(2021, 1, 1).and_hms(18, 00, 00), Utc.ymd(2021, 1, 1).and_hms(18, 15, 00))
+          ),
           created_date: Utc.ymd(2020, 12, 31).and_hms(13, 15, 00),
           booking_date: Utc.ymd(2021, 1, 1).and_hms(18, 00, 00),
         },
@@ -134,20 +133,22 @@ impl BookingAggregate {
             address: "HoChiMinh".to_owned(),
             email: "zentech.demo@gmail.com".to_owned(),
           },
-          staff: Staff {
-            id: "staff123".to_owned(),
-            name: "Tri".to_owned(),
-            services: vec![Service {
-              id: "service123".to_owned(),
-              name: "HairCut".to_owned(),
-              duration: 15,
-            }],
-          },
-          service: Service {
+          service: (
+            Staff {
+              id: "staff123".to_owned(),
+              name: "Tri".to_owned(),
+              services: vec![Service {
+                id: "service123".to_owned(),
+                name: "HairCut".to_owned(),
+                duration: 15,
+              }],
+            },
+            Service {
             id: "service123".to_owned(),
             name: "HairCut".to_owned(),
-            duration: 15,
-          },
+            duration: 15},
+            (Utc.ymd(2021, 1, 2).and_hms(18, 00, 00), Utc.ymd(2021, 1, 2).and_hms(18, 15, 00))
+          ),
           created_date: Utc.ymd(2020, 12, 30).and_hms(13, 15, 00),
           booking_date: Utc.ymd(2021, 1, 2).and_hms(18, 00, 00),
         },
@@ -164,20 +165,22 @@ impl BookingAggregate {
         address: "HoChiMinh".to_owned(),
         email: "zentech.demo@gmail.com".to_owned(),
       },
-      staff: Staff {
-        id: "staff123".to_owned(),
-        name: "Tri".to_owned(),
-        services: vec![Service {
-          id: "service123".to_owned(),
-          name: "HairCut".to_owned(),
-          duration: 15,
-        }],
-      },
-      service: Service {
+      service: (
+        Staff {
+          id: "staff123".to_owned(),
+          name: "Tri".to_owned(),
+          services: vec![Service {
+            id: "service123".to_owned(),
+            name: "HairCut".to_owned(),
+            duration: 15,
+          }],
+        },
+        Service {
         id: "service123".to_owned(),
         name: "HairCut".to_owned(),
-        duration: 15,
-      },
+        duration: 15},
+        (Utc.ymd(2020, 12, 31).and_hms(9, 15, 00), Utc.ymd(2020, 12, 31).and_hms(9, 30, 00),)
+      ),
       created_date: Utc::now().round_subsecs(0),
       booking_date: Utc.ymd(2020, 12, 31).and_hms(9, 15, 00),
     }, BookingData {
@@ -189,20 +192,22 @@ impl BookingAggregate {
         address: "HoChiMinh".to_owned(),
         email: "zentech.demo@gmail.com".to_owned(),
       },
-      staff: Staff {
-        id: "staff234".to_owned(),
-        name: "Tuan".to_owned(),
-        services: vec![Service {
-          id: "service123".to_owned(),
-          name: "HairCut".to_owned(),
-          duration: 15,
-        }],
-      },
-      service: Service {
+      service: (
+        Staff {
+          id: "staff234".to_owned(),
+          name: "Tuan".to_owned(),
+          services: vec![Service {
+            id: "service123".to_owned(),
+            name: "HairCut".to_owned(),
+            duration: 15,
+          }],
+        },
+        Service {
         id: "service123".to_owned(),
         name: "HairCut".to_owned(),
-        duration: 15,
-      },
+        duration: 15},
+        (Utc.ymd(2020, 01, 15).and_hms(9, 15, 00), Utc.ymd(2020, 01, 15).and_hms(9, 30, 00),)
+      ),
       created_date: Utc::now().round_subsecs(0),
       booking_date: Utc.ymd(2020, 01, 15).and_hms(9, 15, 00),
     }]
@@ -221,6 +226,14 @@ impl BookingAggregate {
       start_time: Utc.ymd(2020, 12, 31).and_hms(13, 15, 00),
       end_time: Utc.ymd(2020, 12, 31).and_hms(18, 00, 00),
     }]
+  }
+  pub fn validate_staff_blocking(staff: &Staff) -> bool {
+    let list_blocking: Vec<BlockData> = BookingAggregate::load_blocks();
+    list_blocking.iter();
+    true
+  }
+  pub fn prepareData() {
+
   }
 }
 
