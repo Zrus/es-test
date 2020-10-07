@@ -1,5 +1,4 @@
 use chrono::prelude::*;
-use std::collections::HashMap;
 use uuid::Uuid;
 use serde::Serialize;
 
@@ -12,7 +11,7 @@ use crate::models::staff_models::staff_data::Staff;
 pub struct BookingData {
   pub id: String,
   pub customer: Customer,
-  pub service: (Staff, Service, (DateTime<Utc>, DateTime<Utc>)),
+  pub service: Vec<(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>,
   pub created_date: DateTime<Utc>,
   pub booking_date: DateTime<Utc>,
 }
@@ -20,7 +19,7 @@ pub struct BookingData {
 impl BookingData {
   pub fn new(
     customer: Customer,
-    service: (Staff, Service, (DateTime<Utc>, DateTime<Utc>)),
+    service: Vec<(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>,
     created_date: DateTime<Utc>,
     booking_date: DateTime<Utc>,
   ) -> BookingData {
