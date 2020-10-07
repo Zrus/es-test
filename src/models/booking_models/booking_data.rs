@@ -6,22 +6,21 @@ use crate::models::customer_models::customer_data::Customer;
 use crate::models::service_models::service_data::Service;
 use crate::models::staff_models::staff_data::Staff;
 
-
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Hash, Eq, PartialEq)]
 pub struct BookingData {
   pub id: String,
   pub customer: Customer,
-  pub staff: Staff,
-  pub service: Service,
+  pub staff: Vec<Staff>,
+  pub service: Vec<Service>,
   pub created_date: DateTime<Utc>,
-  pub booking_date: DateTime<Utc>,
+  pub booking_date: DateTime<Utc>
 }
 
 impl BookingData {
   pub fn new(
     customer: Customer,
-    staff: Staff,
-    service: Service,
+    staff: Vec<Staff>,
+    service: Vec<Service>,
     created_date: DateTime<Utc>,
     booking_date: DateTime<Utc>,
   ) -> BookingData {

@@ -8,15 +8,15 @@ use super::super::service_models::service_data::Service;
 pub enum BookingCommands {
   AddBooking {
     customer: Customer,
-    staff: Staff,
-    service: Service,
+    staff: Vec<Staff>,
+    service: Vec<Service>,
     created_date: DateTime<Utc>,
     booking_date: DateTime<Utc>
   },
 }
 
 impl BookingCommands {
-  pub fn add_booking(customer: Customer, staff: Staff, service: Service, created_date: DateTime<Utc>, booking_date: DateTime<Utc>) -> BookingCommands {
+  pub fn add_booking(customer: Customer, staff: Vec<Staff>, service: Vec<Service>, created_date: DateTime<Utc>, booking_date: DateTime<Utc>) -> BookingCommands {
     BookingCommands::AddBooking {
       customer,
       staff,

@@ -20,7 +20,7 @@ fn main() {
       address: "HoChiMinh".to_owned(),
       email: "zentech.demo@gmail.com".to_owned(),
     },
-    Staff {
+    vec![Staff {
       id: "staff123".to_owned(),
       name: "Tri".to_owned(),
       services: vec![Service {
@@ -28,12 +28,12 @@ fn main() {
         name: "HairCut".to_owned(),
         duration: 15,
       }],
-    },
-    Service {
+    }],
+    vec![Service {
       id: "service123".to_owned(),
       name: "HairCut".to_owned(),
       duration: 15,
-    },
+    }],
     Utc::now().round_subsecs(0),
     Utc.ymd(2020, 12, 31).and_hms(9, 15, 00),
   );

@@ -2,7 +2,7 @@ use crate::models::service_models::service_data::Service;
 
 use serde::Serialize;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Hash, Eq, PartialEq)]
 pub struct Staff {
   pub id: String,
   pub name: String,

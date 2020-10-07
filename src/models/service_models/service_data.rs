@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Hash, Eq, PartialEq)]
 pub struct Service {
   pub id: String,
   pub name: String,

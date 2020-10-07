@@ -1,5 +1,7 @@
 use chrono::prelude::*;
 use uuid::Uuid;
+use std::collections::HashSet;
+
 
 use super::super::event_store_models::aggregate::Aggregate;
 use super::super::event_store_models::cloud_event::Result;
@@ -43,7 +45,7 @@ impl Aggregate for BookingAggregate {
         staff,
         service,
         created_date,
-        booking_date,
+        booking_date
       } => {
         let id = Uuid::new_v4();
         match validate_booking() {
@@ -60,7 +62,7 @@ impl Aggregate for BookingAggregate {
                 staff: staff.clone(),
                 service: service.clone(),
                 created_date: created_date.clone(),
-                booking_date: booking_date.clone(),
+                booking_date: booking_date.clone()
               },
             )
           }
@@ -72,7 +74,7 @@ impl Aggregate for BookingAggregate {
               staff: staff.clone(),
               service: service.clone(),
               created_date: created_date.clone(),
-              booking_date: booking_date.clone(),
+              booking_date: booking_date.clone()
             },
           ),
         }
@@ -104,23 +106,23 @@ impl BookingAggregate {
             address: "HoChiMinh".to_owned(),
             email: "zentech.demo@gmail.com".to_owned(),
           },
-          staff: Staff {
-            id: "staff123".to_owned(),
+          staff: vec![Staff {
+            id: "staff01".to_owned(),
             name: "Tri".to_owned(),
             services: vec![Service {
-              id: "service123".to_owned(),
+              id: "service01".to_owned(),
               name: "HairCut".to_owned(),
-              duration: 15,
-            }],
-          },
-          service: Service {
-            id: "service123".to_owned(),
+              duration: 20
+            }]
+          }],
+          service: vec![Service {
+            id: "service02".to_owned(),
             name: "HairCut".to_owned(),
-            duration: 15,
-          },
+            duration: 15
+          }],
           created_date: Utc.ymd(2020, 12, 31).and_hms(13, 15, 00),
           booking_date: Utc.ymd(2021, 1, 1).and_hms(18, 00, 00),
-        },
+        }
       ),
       BookingEvents::BookingAdded(
         "e01a8441-0f33-438b-8a1f-6d0b140f7ee2".to_owned(),
@@ -128,25 +130,25 @@ impl BookingAggregate {
           id: "097cf1a7-4eaa-4347-9015-7cb919b3f1d6".to_owned(),
           customer: Customer {
             id: "customer123".to_owned(),
-            name: "Tuong".to_owned(),
+            name: "Vi".to_owned(),
             phone_number: "0909909009".to_owned(),
             address: "HoChiMinh".to_owned(),
-            email: "zentech.demo@gmail.com".to_owned(),
+            email: "zentech.demo@gmail.com".to_owned()
           },
-          staff: Staff {
-            id: "staff123".to_owned(),
+          staff: vec![Staff {
+            id: "staff01".to_owned(),
             name: "Tri".to_owned(),
             services: vec![Service {
-              id: "service123".to_owned(),
+              id: "service01".to_owned(),
               name: "HairCut".to_owned(),
-              duration: 15,
-            }],
-          },
-          service: Service {
-            id: "service123".to_owned(),
+              duration: 20
+            }]
+          }],
+          service: vec![Service {
+            id: "service01".to_owned(),
             name: "HairCut".to_owned(),
-            duration: 15,
-          },
+            duration: 30
+          }],
           created_date: Utc.ymd(2020, 12, 30).and_hms(13, 15, 00),
           booking_date: Utc.ymd(2021, 1, 2).and_hms(18, 00, 00),
         },
@@ -161,19 +163,161 @@ impl BookingAggregate {
         services: vec![Service {
           id: "service123".to_owned(),
           name: "HairCut".to_owned(),
-          duration: 15,
-        }],
+          duration: 15
+        }]
       },
       start_time: Utc.ymd(2020, 12, 31).and_hms(13, 15, 00),
-      end_time: Utc.ymd(2020, 12, 31).and_hms(18, 00, 00),
+      end_time: Utc.ymd(2020, 12, 31).and_hms(18, 00, 00)
     }]
+  }
+
+  pub fn load_bookings() -> Vec<BookingData> {
+    vec![BookingData {
+      id: "ebc9f2cd-af10-42f4-bfcd-9c12be2941fc".to_owned(),
+      customer: Customer {
+        id: "customer01".to_owned(),
+        name: "Vinh".to_owned(),
+        phone_number: "123456789".to_owned(),
+        address: "HoChiMinh".to_owned(),
+        email: "vinh@gmail.com".to_owned(),
+      },
+      staff: vec![Staff {
+        id: "staff01".to_owned(),
+        name: "Tri".to_owned(),
+        services: vec![Service {
+          id: "service01".to_owned(),
+          name: "HairCut".to_owned(),
+          duration: 20,
+        }],
+      },
+      Staff {
+        id: "staff02".to_owned(),
+        name: "Halu".to_owned(),
+        services: vec![Service {
+          id: "service02".to_owned(),
+          name: "Manicure".to_owned(),
+          duration: 30,
+        }],
+      }],
+      service: vec![Service {
+        id: "service01".to_owned(),
+        name: "HairCut".to_owned(),
+        duration: 20,
+      },
+      Service {
+        id: "service02".to_owned(),
+        name: "Manicure".to_owned(),
+        duration: 30,
+      }],
+      created_date: Utc.ymd(2020, 10, 1).and_hms(9, 00, 00),
+      booking_date: Utc.ymd(2020, 10, 5).and_hms(9, 00, 00),
+    }, 
+    
+    BookingData {
+      id: "d2054836-8e5e-44ff-a9fa-35c64cd6cf2e".to_owned(),
+      customer: Customer {
+        id: "customer02".to_owned(),
+        name: "Thong".to_owned(),
+        phone_number: "987654321".to_owned(),
+        address: "HoChiMinh".to_owned(),
+        email: "thong@gmail.com".to_owned(),
+      },
+      staff: vec![Staff {
+        id: "staff02".to_owned(),
+        name: "Halu".to_owned(),
+        services: vec![Service {
+          id: "service02".to_owned(),
+          name: "Manicure".to_owned(),
+          duration: 30,
+        }],
+      }],
+      service: vec![Service {
+        id: "service02".to_owned(),
+        name: "Manicure".to_owned(),
+        duration: 30,
+      }],
+      created_date: Utc.ymd(2020, 10, 1).and_hms(9, 00, 00),
+      booking_date: Utc.ymd(2020, 10, 5).and_hms(10, 00, 00),
+    },
+
+    BookingData {
+      id: "d2054836-8e5e-44ff-a9fa-35c64cd6cf2e".to_owned(),
+      customer: Customer {
+        id: "customer02".to_owned(),
+        name: "Daocuong".to_owned(),
+        phone_number: "909909009".to_owned(),
+        address: "Chicago".to_owned(),
+        email: "daocuong@gmail.com".to_owned(),
+      },
+      staff: vec![Staff {
+        id: "staff03".to_owned(),
+        name: "Tuanbeo".to_owned(),
+        services: vec![Service {
+          id: "service02".to_owned(),
+          name: "Manicure".to_owned(),
+          duration: 30,
+        }],
+      }],
+      service: vec![Service {
+        id: "service02".to_owned(),
+        name: "Manicure".to_owned(),
+        duration: 30,
+      }],
+      created_date: Utc.ymd(2020, 10, 1).and_hms(9, 00, 00),
+      booking_date: Utc.ymd(2020, 10, 5).and_hms(11, 00, 00),
+    }]
+  }
+
+  pub fn validate_booking_date(new_booking: &BookingData) {
+    let bookings = BookingAggregate::load_bookings();
+    let mut valid_bookings = HashSet::new();
+    for booking in &bookings {
+      if booking.staff.iter().any(|staff| new_booking.staff.contains(&staff)) {
+          println!("{:?}", booking);
+          valid_bookings.insert(booking);
+      }
+  }
   }
 }
 
 #[cfg(test)]
 mod tests {
+  use crate::booking_aggregate::BookingAggregate;
+  use crate::models::customer_models::customer_data::Customer;
+  use crate::models::service_models::service_data::Service;
+  use crate::models::staff_models::staff_data::Staff;
+  use crate::models::booking_models::booking_data::BookingData;
+  use chrono::prelude::*;
   #[test]
   fn test_handle_commands() {
-    println!("Oke dumamay");
+    // println!("{:?}", BookingAggregate::load_bookings());
+    let new_booking = BookingData {
+      id: "097cf1a7-4eaa-4347-9015-7cb919b3f1d6".to_owned(),
+          customer: Customer {
+            id: "customer4".to_owned(),
+            name: "Vi".to_owned(),
+            phone_number: "0909909009".to_owned(),
+            address: "HoChiMinh".to_owned(),
+            email: "vi@gmail.com".to_owned()
+          },
+          staff: vec![Staff {
+            id: "staff02".to_owned(),
+            name: "Halu".to_owned(),
+            services: vec![Service {
+              id: "service02".to_owned(),
+              name: "Manicure".to_owned(),
+              duration: 30
+            }]
+          }],
+          service: vec![Service {
+            id: "service02".to_owned(),
+            name: "Manicure".to_owned(),
+            duration: 30
+          }],
+          created_date: Utc.ymd(2020, 12, 30).and_hms(13, 15, 00),
+          booking_date: Utc.ymd(2021, 1, 2).and_hms(18, 00, 00),
+    };
+    BookingAggregate::validate_booking_date(&new_booking);
+
   }
 }
