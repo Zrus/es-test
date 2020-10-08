@@ -12,5 +12,5 @@ use models::staff_models::staff_data::Staff;
 use chrono::prelude::*;
 
 fn main() {
-  
+  println!("Hello, Rustacean");
 }

@@ -1,4 +1,6 @@
 use chrono::prelude::*;
+use std::hash::{Hash, Hasher};
+use std::cmp::Eq;
 use uuid::Uuid;
 use serde::Serialize;
 
@@ -7,7 +9,7 @@ use crate::models::service_models::service_data::Service;
 use crate::models::staff_models::staff_data::Staff;
 
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Eq)]
 pub struct BookingData {
   pub id: String,
   pub customer: Customer,
@@ -21,7 +23,7 @@ impl BookingData {
     customer: Customer,
     service: Vec<(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>,
     created_date: DateTime<Utc>,
-    booking_date: DateTime<Utc>,
+    booking_date: DateTime<Utc>,  
   ) -> BookingData {
     BookingData {
       id: Uuid::new_v4().to_string(),
@@ -45,3 +47,18 @@ impl Clone for BookingData {
   }
 }
 
+impl PartialEq for BookingData {
+  fn eq(&self, booking: &BookingData) -> bool {
+    self.id == booking.id && self.customer == booking.customer && self.service == booking.service && self.created_date == booking.created_date && self.booking_date == booking.booking_date
+  }
+}
+
+impl Hash for BookingData {
+  fn hash<H: Hasher>(&self, state: &mut H) {
+    self.id.hash(state);
+    self.customer.hash(state);
+    self.service.hash(state);
+    self.created_date.hash(state);
+    self.booking_date.hash(state);
+  }
+}

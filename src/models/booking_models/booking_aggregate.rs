@@ -165,7 +165,7 @@ impl BookingAggregate {
       ),
     ]
   }
-  pub fn load_bookings(staff: &Vec<Staff>) -> Vec<BookingData> {
+  pub fn load_bookings(new_staff: &Vec<Staff>) -> Vec<BookingData> {
     let dummy = vec![
       BookingData {
         id: "booking-data-ebc9f2cd-af10-42f4-bfcd-9c12be2941fc".to_owned(),
@@ -232,11 +232,16 @@ impl BookingAggregate {
         booking_date: Utc.ymd(2020, 01, 15).and_hms(9, 15, 00),
       },
     ];
-    let staff_hs = HashSet::from_iter(staff.iter().collect());
-    let staff_booking_hs = HashSet::from_iter(dummy.iter().map(|e| -> Vec<Staff> { e.service.iter().map(|e1| -> Staff { e1.0.clone() }).collect() }).collect());
-    let ret_hs: HashSet<BookingData> = HashSet::new();
-    
+    let mut booking_hs = HashSet::new();
+    for booking in &dummy {
+      let staff: Vec<Staff> = booking.service.iter().map(|s| -> Staff { s.0.clone() }).collect();
+      if staff.iter().any(|s| new_staff.contains(s)) {
+        booking_hs.insert(booking.clone());
+      }
+    }
+    Vec::from_iter(booking_hs.into_iter())
   }
+
   pub fn load_blocks() -> Vec<BlockData> {
     vec![BlockData {
       staff: Staff {
@@ -263,5 +268,7 @@ impl BookingAggregate {
 #[cfg(test)]
 mod tests {
   #[test]
-  fn test_handle_commands() {}
+  fn test_handle_commands() {
+    
+  }
 }
