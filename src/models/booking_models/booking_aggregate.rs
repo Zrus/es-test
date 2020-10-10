@@ -53,8 +53,7 @@ impl Aggregate for BookingAggregate {
             let staff_hs = service
               .into_iter()
               .map(|e| -> Staff { e.0.clone() })
-              .collect();
-            let booking_list = BookingAggregate::load_bookings(&staff_hs);
+              .collect::<Vec<Staff>>();
             // logic ended
 
             BookingEvents::BookingAdded(
@@ -168,7 +167,8 @@ impl BookingAggregate {
       ),
     ]
   }
-  pub fn load_bookings(new_staff: &Vec<Staff>) -> Vec<BookingData> {
+
+  pub fn load_bookings(new_staff: &Staff) -> Vec<BookingData> {
     let dummy = vec![
       BookingData {
         id: "booking-01".to_owned(),
@@ -179,28 +179,50 @@ impl BookingAggregate {
           address: "HoChiMinh".to_owned(),
           email: "vinh@gmail.com".to_owned(),
         },
-        service: vec![(
-          Staff {
-            id: "staff-01".to_owned(),
-            name: "Rin".to_owned(),
-            services: vec![Service {
+        service: vec![
+          (
+            Staff {
+              id: "staff-01".to_owned(),
+              name: "Rin".to_owned(),
+              services: vec![Service {
+                id: "service-01".to_owned(),
+                name: "HairCut".to_owned(),
+                duration: 20,
+              }],
+            },
+            Service {
               id: "service-01".to_owned(),
               name: "HairCut".to_owned(),
               duration: 20,
-            }],
-          },
-          Service {
-            id: "service-01".to_owned(),
-            name: "HairCut".to_owned(),
-            duration: 20,
-          },
-          (
-            Utc.ymd(2020, 10, 5).and_hms(9, 0, 0),
-            Utc.ymd(2020, 10, 5).and_hms(9, 20, 0),
+            },
+            (
+              Utc.ymd(2020, 10, 5).and_hms(8, 0, 0),
+              Utc.ymd(2020, 10, 5).and_hms(8, 20, 0),
+            ),
           ),
-        )],
+          (
+            Staff {
+              id: "staff-02".to_owned(),
+              name: "Halu".to_owned(),
+              services: vec![Service {
+                id: "service-02".to_owned(),
+                name: "Manicure".to_owned(),
+                duration: 30,
+              }],
+            },
+            Service {
+              id: "service-01".to_owned(),
+              name: "HairCut".to_owned(),
+              duration: 20,
+            },
+            (
+              Utc.ymd(2020, 10, 5).and_hms(8, 20, 0),
+              Utc.ymd(2020, 10, 5).and_hms(8, 50, 0),
+            ),
+          ),
+        ],
         created_date: Utc.ymd(2020, 10, 1).and_hms(0, 0, 0),
-        booking_date: Utc.ymd(2020, 10, 5).and_hms(9, 0, 0),
+        booking_date: Utc.ymd(2020, 10, 5).and_hms(8, 0, 0),
       },
       BookingData {
         id: "booking-02".to_owned(),
@@ -281,8 +303,7 @@ impl BookingAggregate {
         .iter()
         .map(|s| -> Staff { s.0.clone() })
         .collect();
-      if staff.iter().any(|s| new_staff.contains(s)) {
-        // println!("{:#?}", booking);
+      if staff.iter().any(|s| new_staff == s) {
         booking_hs.insert(booking.clone());
       }
     }
@@ -349,8 +370,8 @@ mod tests {
             duration: 20,
           },
           (
-            Utc.ymd(2020, 10, 5).and_hms(11, 0, 0),
-            Utc.ymd(2020, 10, 5).and_hms(11, 20, 0),
+            Utc.ymd(2020, 10, 5).and_hms(8, 0, 0),
+            Utc.ymd(2020, 10, 5).and_hms(8, 20, 0),
           ),
         ),
         (
@@ -369,22 +390,37 @@ mod tests {
             duration: 30,
           },
           (
-            Utc.ymd(2020, 10, 5).and_hms(11, 20, 0),
-            Utc.ymd(2020, 10, 5).and_hms(11, 50, 0),
+            Utc.ymd(2020, 10, 5).and_hms(8, 20, 0),
+            Utc.ymd(2020, 10, 5).and_hms(8, 50, 0),
           ),
         ),
       ],
       created_date: Utc.ymd(2020, 10, 1).and_hms(0, 0, 0),
-      booking_date: Utc.ymd(2020, 10, 5).and_hms(11, 0, 0),
+      booking_date: Utc.ymd(2020, 10, 5).and_hms(8, 0, 0),
     };
-    let staff: Vec<Staff> = booking
-      .service
-      .iter()
-      .map(|s| -> Staff { s.0.clone() })
-      .collect();
+    let current_service_iter = booking.service.iter();
 
-    let loaded_bookings = BookingAggregate::load_bookings(&staff);
+    current_service_iter.for_each(|service| {
+      let time_booking = BookingAggregate::load_bookings(&service.0)
+        .iter()
+        .map(|booking| {
+          booking
+            .service
+            .iter()
+            .map(|s| s.clone())
+            .collect::<Vec<(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>>()
+        })
+        .collect::<Vec<Vec<(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>>>();
 
-    println!("{:#?}", loaded_bookings);
+      let current_service_time = service.2;
+
+      for time in time_booking {
+        let list_of_conflict_service = time.iter().filter(|t| -> bool {
+          !(current_service_time.0 > t.2.clone().1 || current_service_time.1 < t.2.clone().0)
+        }).collect::<Vec<&(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>>();
+
+        println!("{:#?}", list_of_conflict_service);
+      }
+    });
   }
 }

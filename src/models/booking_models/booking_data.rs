@@ -18,6 +18,13 @@ pub struct BookingData {
   pub booking_date: DateTime<Utc>,
 }
 
+struct ServiceInfo {
+  staff: Staff,
+  service: Service,
+  time_start: DateTime<Utc>,
+  time_end: DateTime<Utc>
+}
+
 impl BookingData {
   pub fn new(
     customer: Customer,
