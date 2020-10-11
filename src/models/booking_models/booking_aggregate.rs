@@ -345,7 +345,7 @@ mod tests {
   #[test]
   fn test_handle_commands() {
     let booking = BookingData {
-      id: "non-id".to_owned(),
+      id: "booking-04".to_owned(),
       customer: Customer {
         id: "customer-04".to_owned(),
         name: "Thai Ngo".to_owned(),
@@ -404,20 +404,23 @@ mod tests {
       let time_booking = BookingAggregate::load_bookings(&service.0)
         .iter()
         .map(|booking| {
-          booking
-            .service
-            .iter()
-            .map(|s| s.clone())
-            .collect::<Vec<(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>>()
+          booking.service.iter().map(|s| s.clone()).collect::<Vec<(
+            Staff,
+            Service,
+            (DateTime<Utc>, DateTime<Utc>),
+          )>>()
         })
         .collect::<Vec<Vec<(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>>>();
 
       let current_service_time = service.2;
 
       for time in time_booking {
-        let list_of_conflict_service = time.iter().filter(|t| -> bool {
-          !(current_service_time.0 > t.2.clone().1 || current_service_time.1 < t.2.clone().0)
-        }).collect::<Vec<&(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>>();
+        let list_of_conflict_service = time
+          .iter()
+          .filter(|t| -> bool {
+            !(current_service_time.0 > t.2.clone().1 || current_service_time.1 < t.2.clone().0)
+          })
+          .collect::<Vec<&(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>>();
 
         println!("{:#?}", list_of_conflict_service);
       }
