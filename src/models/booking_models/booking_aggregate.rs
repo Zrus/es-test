@@ -8,10 +8,12 @@ use super::super::event_store_models::cloud_event::Result;
 use super::blocking_data::BlockData;
 use super::booking_commands::BookingCommands;
 use super::booking_data::BookingData;
+use super::booking_data::ServiceInfo;
 use super::booking_events::BookingEvents;
 use super::booking_state::BookingState;
 
 use super::super::customer_models::customer_data::Customer;
+use super::super::dummy_data_models::dummy_data::DummyData;
 use super::super::service_models::service_data::Service;
 use super::super::staff_models::staff_data::Staff;
 
@@ -47,27 +49,49 @@ impl Aggregate for BookingAggregate {
         booking_date,
       } => {
         let id = Uuid::new_v4();
-        match validate_booking() {
-          true => {
-            // add logic here
-            let staff_hs = service
-              .into_iter()
-              .map(|e| -> Staff { e.0.clone() })
-              .collect::<Vec<Staff>>();
-            // logic ended
+        let list_of_conflict_services = service
+          .iter()
+          .filter(|service| {
+            let current_staff = &service.staff;
+            let current_staff_list_bookings = BookingAggregate::load_bookings(&current_staff);
+            let current_staff_list_services_from_list_bookings = current_staff_list_bookings
+              .iter()
+              .map(|booking| {
+                booking
+                  .service
+                  .iter()
+                  .map(|service| service.clone())
+                  .collect::<Vec<ServiceInfo>>()
+              })
+              .collect::<Vec<Vec<ServiceInfo>>>();
+            let current_staff_service_time = (service.time_start, service.time_end);
 
-            BookingEvents::BookingAdded(
-              id.to_string(),
-              BookingData {
-                id: id.to_string(),
-                customer: customer.clone(),
-                service: service.clone(),
-                created_date: created_date.clone(),
-                booking_date: booking_date.clone(),
-              },
-            )
-          }
-          false => BookingEvents::BookingAddFailed(
+            current_staff_list_services_from_list_bookings
+              .iter()
+              .any(|booking| {
+                booking.iter().any(|service| {
+                  let service_time = (service.time_start, service.time_end);
+                  !(current_staff_service_time.0 > service_time.1
+                    || current_staff_service_time.1 < service_time.0)
+                })
+              })
+          })
+          .collect::<Vec<&ServiceInfo>>();
+        match (
+          BookingAggregate::validate_booking(),
+          list_of_conflict_services.is_empty(),
+        ) {
+          (true, true) => BookingEvents::BookingAdded(
+            id.to_string(),
+            BookingData {
+              id: id.to_string(),
+              customer: customer.clone(),
+              service: service.clone(),
+              created_date: created_date.clone(),
+              booking_date: booking_date.clone(),
+            },
+          ),
+          (_, _) => BookingEvents::BookingAddFailed(
             id.to_string(),
             BookingData {
               id: id.to_string(),
@@ -88,220 +112,20 @@ impl Aggregate for BookingAggregate {
   }
 }
 
-fn validate_booking() -> bool {
-  true
-}
-
 impl BookingAggregate {
-  pub fn load_events() -> Vec<BookingEvents> {
-    vec![
-      BookingEvents::BookingAdded(
-        "booking-event-c9cf925d-7a08-4758-ad9e-94e6a676aed7".to_owned(),
-        BookingData {
-          id: "booking-data-5ec38249-84e4-4a04-847b-d4f4d8f8d577".to_owned(),
-          customer: Customer {
-            id: "customer123".to_owned(),
-            name: "Tuong".to_owned(),
-            phone_number: "0909909009".to_owned(),
-            address: "HoChiMinh".to_owned(),
-            email: "zentech.demo@gmail.com".to_owned(),
-          },
-          service: vec![(
-            Staff {
-              id: "staff123".to_owned(),
-              name: "Tri".to_owned(),
-              services: vec![Service {
-                id: "service123".to_owned(),
-                name: "HairCut".to_owned(),
-                duration: 15,
-              }],
-            },
-            Service {
-              id: "service123".to_owned(),
-              name: "HairCut".to_owned(),
-              duration: 15,
-            },
-            (
-              Utc.ymd(2021, 1, 1).and_hms(18, 00, 00),
-              Utc.ymd(2021, 1, 1).and_hms(18, 15, 00),
-            ),
-          )],
-          created_date: Utc.ymd(2020, 12, 31).and_hms(13, 15, 00),
-          booking_date: Utc.ymd(2021, 1, 1).and_hms(18, 00, 00),
-        },
-      ),
-      BookingEvents::BookingAdded(
-        "booking-event-e01a8441-0f33-438b-8a1f-6d0b140f7ee2".to_owned(),
-        BookingData {
-          id: "booking-data-097cf1a7-4eaa-4347-9015-7cb919b3f1d6".to_owned(),
-          customer: Customer {
-            id: "customer123".to_owned(),
-            name: "Tuong".to_owned(),
-            phone_number: "0909909009".to_owned(),
-            address: "HoChiMinh".to_owned(),
-            email: "zentech.demo@gmail.com".to_owned(),
-          },
-          service: vec![(
-            Staff {
-              id: "staff123".to_owned(),
-              name: "Tri".to_owned(),
-              services: vec![Service {
-                id: "service123".to_owned(),
-                name: "HairCut".to_owned(),
-                duration: 15,
-              }],
-            },
-            Service {
-              id: "service123".to_owned(),
-              name: "HairCut".to_owned(),
-              duration: 15,
-            },
-            (
-              Utc.ymd(2021, 1, 2).and_hms(18, 00, 00),
-              Utc.ymd(2021, 1, 2).and_hms(18, 15, 00),
-            ),
-          )],
-          created_date: Utc.ymd(2020, 12, 30).and_hms(13, 15, 00),
-          booking_date: Utc.ymd(2021, 1, 2).and_hms(18, 00, 00),
-        },
-      ),
-    ]
+  pub fn validate_booking() -> bool {
+    true
   }
 
   pub fn load_bookings(new_staff: &Staff) -> Vec<BookingData> {
-    let dummy = vec![
-      BookingData {
-        id: "booking-01".to_owned(),
-        customer: Customer {
-          id: "customer-01".to_owned(),
-          name: "Vinh".to_owned(),
-          phone_number: "0123456789".to_owned(),
-          address: "HoChiMinh".to_owned(),
-          email: "vinh@gmail.com".to_owned(),
-        },
-        service: vec![
-          (
-            Staff {
-              id: "staff-01".to_owned(),
-              name: "Rin".to_owned(),
-              services: vec![Service {
-                id: "service-01".to_owned(),
-                name: "HairCut".to_owned(),
-                duration: 20,
-              }],
-            },
-            Service {
-              id: "service-01".to_owned(),
-              name: "HairCut".to_owned(),
-              duration: 20,
-            },
-            (
-              Utc.ymd(2020, 10, 5).and_hms(8, 0, 0),
-              Utc.ymd(2020, 10, 5).and_hms(8, 20, 0),
-            ),
-          ),
-          (
-            Staff {
-              id: "staff-02".to_owned(),
-              name: "Halu".to_owned(),
-              services: vec![Service {
-                id: "service-02".to_owned(),
-                name: "Manicure".to_owned(),
-                duration: 30,
-              }],
-            },
-            Service {
-              id: "service-01".to_owned(),
-              name: "HairCut".to_owned(),
-              duration: 20,
-            },
-            (
-              Utc.ymd(2020, 10, 5).and_hms(8, 20, 0),
-              Utc.ymd(2020, 10, 5).and_hms(8, 50, 0),
-            ),
-          ),
-        ],
-        created_date: Utc.ymd(2020, 10, 1).and_hms(0, 0, 0),
-        booking_date: Utc.ymd(2020, 10, 5).and_hms(8, 0, 0),
-      },
-      BookingData {
-        id: "booking-02".to_owned(),
-        customer: Customer {
-          id: "customer-02".to_owned(),
-          name: "Thong".to_owned(),
-          phone_number: "0987654321".to_owned(),
-          address: "HoChiMinh".to_owned(),
-          email: "thong@gmail.com".to_owned(),
-        },
-        service: vec![(
-          Staff {
-            id: "staff-02".to_owned(),
-            name: "Halu".to_owned(),
-            services: vec![Service {
-              id: "service-02".to_owned(),
-              name: "Manicure".to_owned(),
-              duration: 30,
-            }],
-          },
-          Service {
-            id: "service-02".to_owned(),
-            name: "Manicure".to_owned(),
-            duration: 30,
-          },
-          (
-            Utc.ymd(2020, 10, 5).and_hms(10, 0, 0),
-            Utc.ymd(2020, 10, 5).and_hms(10, 30, 0),
-          ),
-        )],
-        created_date: Utc.ymd(2020, 10, 1).and_hms(0, 0, 0),
-        booking_date: Utc.ymd(2020, 10, 5).and_hms(10, 0, 0),
-      },
-      BookingData {
-        id: "booking-03".to_owned(),
-        customer: Customer {
-          id: "customer-03".to_owned(),
-          name: "Dao Cuong".to_owned(),
-          phone_number: "0909909009".to_owned(),
-          address: "Chicago".to_owned(),
-          email: "daocuong@gmail.com".to_owned(),
-        },
-        service: vec![(
-          Staff {
-            id: "staff-03".to_owned(),
-            name: "Tuanbeo".to_owned(),
-            services: vec![
-              Service {
-                id: "service-01".to_owned(),
-                name: "Haircut".to_owned(),
-                duration: 20,
-              },
-              Service {
-                id: "service-02".to_owned(),
-                name: "Manicure".to_owned(),
-                duration: 30,
-              },
-            ],
-          },
-          Service {
-            id: "service-02".to_owned(),
-            name: "Manicure".to_owned(),
-            duration: 30,
-          },
-          (
-            Utc.ymd(2020, 10, 5).and_hms(11, 0, 0),
-            Utc.ymd(2020, 10, 5).and_hms(11, 30, 0),
-          ),
-        )],
-        created_date: Utc.ymd(2020, 10, 1).and_hms(0, 0, 0),
-        booking_date: Utc.ymd(2020, 10, 5).and_hms(11, 0, 0),
-      },
-    ];
+    let dummy = DummyData::load_bookings();
+
     let mut booking_hs = HashSet::new();
     for booking in &dummy {
       let staff: Vec<Staff> = booking
         .service
         .iter()
-        .map(|s| -> Staff { s.0.clone() })
+        .map(|s| -> Staff { s.staff.clone() })
         .collect();
       if staff.iter().any(|s| new_staff == s) {
         booking_hs.insert(booking.clone());
@@ -309,34 +133,13 @@ impl BookingAggregate {
     }
     Vec::from_iter(booking_hs.into_iter())
   }
-
-  pub fn load_blocks() -> Vec<BlockData> {
-    vec![BlockData {
-      staff: Staff {
-        id: "staff123".to_owned(),
-        name: "Tri".to_owned(),
-        services: vec![Service {
-          id: "service123".to_owned(),
-          name: "HairCut".to_owned(),
-          duration: 15,
-        }],
-      },
-      start_time: Utc.ymd(2020, 12, 31).and_hms(13, 15, 00),
-      end_time: Utc.ymd(2020, 12, 31).and_hms(18, 00, 00),
-    }]
-  }
-  pub fn validate_staff_blocking(staff: &Staff) -> bool {
-    let list_blocking: Vec<BlockData> = BookingAggregate::load_blocks();
-    list_blocking.iter();
-    true
-  }
-  pub fn prepare_data() {}
 }
 
 #[cfg(test)]
 mod tests {
   use crate::models::booking_models::booking_aggregate::BookingAggregate;
   use crate::models::booking_models::booking_data::BookingData;
+  use crate::models::booking_models::booking_data::ServiceInfo;
   use crate::models::customer_models::customer_data::Customer;
   use crate::models::service_models::service_data::Service;
   use crate::models::staff_models::staff_data::Staff;
@@ -354,8 +157,8 @@ mod tests {
         email: "thaingo@gmail.com".to_owned(),
       },
       service: vec![
-        (
-          Staff {
+        ServiceInfo {
+          staff: Staff {
             id: "staff-01".to_owned(),
             name: "Rin".to_owned(),
             services: vec![Service {
@@ -364,18 +167,16 @@ mod tests {
               duration: 20,
             }],
           },
-          Service {
+          service: Service {
             id: "service-01".to_owned(),
             name: "Haircut".to_owned(),
             duration: 20,
           },
-          (
-            Utc.ymd(2020, 10, 5).and_hms(8, 0, 0),
-            Utc.ymd(2020, 10, 5).and_hms(8, 20, 0),
-          ),
-        ),
-        (
-          Staff {
+          time_start: Utc.ymd(2020, 10, 5).and_hms(8, 0, 0),
+          time_end: Utc.ymd(2020, 10, 5).and_hms(8, 20, 0),
+        },
+        ServiceInfo {
+          staff: Staff {
             id: "staff-02".to_owned(),
             name: "Halu".to_owned(),
             services: vec![Service {
@@ -384,43 +185,17 @@ mod tests {
               duration: 30,
             }],
           },
-          Service {
+          service: Service {
             id: "service-02".to_owned(),
             name: "Manicure".to_owned(),
             duration: 30,
           },
-          (
-            Utc.ymd(2020, 10, 5).and_hms(8, 20, 0),
-            Utc.ymd(2020, 10, 5).and_hms(8, 50, 0),
-          ),
-        ),
+          time_start: Utc.ymd(2020, 10, 5).and_hms(8, 20, 0),
+          time_end: Utc.ymd(2020, 10, 5).and_hms(8, 50, 0),
+        },
       ],
       created_date: Utc.ymd(2020, 10, 1).and_hms(0, 0, 0),
       booking_date: Utc.ymd(2020, 10, 5).and_hms(8, 0, 0),
     };
-    let current_service_iter = booking.service.iter();
-
-    current_service_iter.for_each(|service| {
-      let time_booking = BookingAggregate::load_bookings(&service.0)
-        .iter()
-        .map(|booking| {
-          booking
-            .service
-            .iter()
-            .map(|s| s.clone())
-            .collect::<Vec<(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>>()
-        })
-        .collect::<Vec<Vec<(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>>>();
-
-      let current_service_time = service.2;
-
-      for time in time_booking {
-        let list_of_conflict_service = time.iter().filter(|t| -> bool {
-          !(current_service_time.0 > t.2.clone().1 || current_service_time.1 < t.2.clone().0)
-        }).collect::<Vec<&(Staff, Service, (DateTime<Utc>, DateTime<Utc>))>>();
-
-        println!("{:#?}", list_of_conflict_service);
-      }
-    });
   }
 }
